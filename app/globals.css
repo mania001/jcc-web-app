@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -121,5 +121,13 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .layout-gap {
+    @apply px-6 md:px-10;
+  }
+
+  .test * {
+    @apply border-red-500 border;
   }
 }
