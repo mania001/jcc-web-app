@@ -5,10 +5,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
-import { AdminLogin } from '../ations'
+import { AdminLogin } from '../actions/admin-login'
+import { useForm } from 'react-hook-form'
+import { adminLoginSchema, type AdminLoginInput } from '../schema'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useServerFormAction } from '@/lib/use-server-form-action'
 
 export default function LoginForm() {
-  const [state, formAction, pending] = useActionState(AdminLogin, null)
+  const [state, formAction, isPending] = useActionState(AdminLogin, { success: true })
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AdminLoginInput>({
+    resolver: zodResolver(adminLoginSchema),
+  })
+
+  const submit = useServerFormAction<AdminLoginInput>(formAction)
 
   return (
     <Card>
@@ -17,26 +31,27 @@ export default function LoginForm() {
         <CardDescription>환영합니다. 관리자 계정으로 로그인하세요.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form action={formAction} className="space-y-6">
+        <form onSubmit={handleSubmit(submit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email">이메일</Label>
-            <Input id="email" name="email" type="email" required placeholder="admin@example.com" />
+            <Input {...register('email')} type="email" required placeholder="admin@example.com" />
+            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">비밀번호</Label>
             <Input
-              id="password"
-              name="password"
+              {...register('password')}
               type="password"
               required
               placeholder="비밀번호를 입력해주세요."
             />
+            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
           </div>
 
-          {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
+          {state?.success === false && <p className="text-sm text-red-500">{state.error}</p>}
 
-          <Button type="submit" className="w-full" disabled={pending}>
-            {pending ? '로그인 중...' : '로그인'}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? '로그인 중...' : '로그인'}
           </Button>
         </form>
       </CardContent>
