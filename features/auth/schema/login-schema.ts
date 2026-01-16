@@ -6,4 +6,4 @@ export const loginSchema = z.object({
   password: z.string().min(8, ErrorCodes.PASSWORD_TOO_SHORT),
 })
 
-export type LoginInput = z.infer<typeof loginSchema>
+export type LoginFormValues = z.infer<typeof loginSchema>

@@ -6,25 +6,17 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
 import { AdminLogin } from '../actions/admin-login'
-import { useForm } from 'react-hook-form'
-import { loginSchema, type LoginInput } from '../schema/login-schema'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { type LoginFormValues } from '../schema/login-schema'
 import { useServerFormAction } from '@/lib/use-server-form-action'
 import { AuthErrorMessage } from './AuthErrorMessage'
 import { ErrorCode } from '@/lib/errors/error-codes'
+import { useLoginForm } from '../hooks/useLoginForm'
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(AdminLogin, null)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-  })
-
-  const submit = useServerFormAction<LoginInput>(formAction)
+  const form = useLoginForm()
+  const submit = useServerFormAction<LoginFormValues>(formAction)
 
   return (
     <Card>
@@ -33,21 +25,30 @@ export default function LoginForm() {
         <CardDescription>환영합니다. 관리자 계정으로 로그인하세요.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(submit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(submit)} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="email">이메일</Label>
-            <Input {...register('email')} type="email" required placeholder="admin@example.com" />
-            {errors.email && <AuthErrorMessage code={errors.email.message as ErrorCode} />}
+            <Input
+              {...form.register('email')}
+              type="email"
+              required
+              placeholder="admin@example.com"
+            />
+            {form.formState.errors.email && (
+              <AuthErrorMessage code={form.formState.errors.email.message as ErrorCode} />
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">비밀번호</Label>
             <Input
-              {...register('password')}
+              {...form.register('password')}
               type="password"
               required
               placeholder="비밀번호를 입력해주세요."
             />
-            {errors.password && <AuthErrorMessage code={errors.password.message as ErrorCode} />}
+            {form.formState.errors.password && (
+              <AuthErrorMessage code={form.formState.errors.password.message as ErrorCode} />
+            )}
           </div>
 
           {state?.success === false && <AuthErrorMessage code={state.code!} />}
