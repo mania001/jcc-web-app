@@ -1,16 +1,12 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { requireAdmin } from '@/lib/admin/require-admin'
 
 export default async function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
+  const admin = await requireAdmin()
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
-
-  if (!session) {
-    redirect('/admin/login')
-  }
-
-  return <div>{children}</div>
+  return (
+    <div>
+      {admin.id} - {admin.role}
+      {children}
+    </div>
+  )
 }
