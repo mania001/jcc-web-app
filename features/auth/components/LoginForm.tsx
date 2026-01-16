@@ -7,22 +7,24 @@ import { Label } from '@/components/ui/label'
 import { useActionState } from 'react'
 import { AdminLogin } from '../actions/admin-login'
 import { useForm } from 'react-hook-form'
-import { adminLoginSchema, type AdminLoginInput } from '../schema'
+import { loginSchema, type LoginInput } from '../schema/login-schema'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useServerFormAction } from '@/lib/use-server-form-action'
+import { AuthErrorMessage } from './AuthErrorMessage'
+import { ErrorCode } from '@/lib/errors/error-codes'
 
 export default function LoginForm() {
-  const [state, formAction, isPending] = useActionState(AdminLogin, { success: true })
+  const [state, formAction, isPending] = useActionState(AdminLogin, null)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AdminLoginInput>({
-    resolver: zodResolver(adminLoginSchema),
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
   })
 
-  const submit = useServerFormAction<AdminLoginInput>(formAction)
+  const submit = useServerFormAction<LoginInput>(formAction)
 
   return (
     <Card>
@@ -35,7 +37,7 @@ export default function LoginForm() {
           <div className="space-y-2">
             <Label htmlFor="email">이메일</Label>
             <Input {...register('email')} type="email" required placeholder="admin@example.com" />
-            {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+            {errors.email && <AuthErrorMessage code={errors.email.message as ErrorCode} />}
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">비밀번호</Label>
@@ -45,10 +47,10 @@ export default function LoginForm() {
               required
               placeholder="비밀번호를 입력해주세요."
             />
-            {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+            {errors.password && <AuthErrorMessage code={errors.password.message as ErrorCode} />}
           </div>
 
-          {state?.success === false && <p className="text-sm text-red-500">{state.error}</p>}
+          {state?.success === false && <AuthErrorMessage code={state.code!} />}
 
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending ? '로그인 중...' : '로그인'}
