@@ -1,6 +1,10 @@
+import { AdminRoles } from '@/lib/admin'
 import { boolean, pgEnum, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
 
-export const adminRoleEnum = pgEnum('admin_role', ['master', 'manager', 'editor'])
+export const adminRoleEnum = pgEnum(
+  'admin_role',
+  Object.values(AdminRoles) as [string, ...string[]],
+)
 
 export const admins = pgTable('admins', {
   id: uuid('id').primaryKey(),

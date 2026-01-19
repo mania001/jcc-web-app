@@ -2,7 +2,7 @@ import 'server-only'
 
 import { redirect } from 'next/navigation'
 import { createClient } from '../supabase/server'
-import { AdminRole } from './admin-types'
+import { AdminRole } from './admin-roles'
 import { db } from '@/db'
 import { admins } from '@/db/schema'
 import { eq } from 'drizzle-orm'
