@@ -5,8 +5,3 @@ export const AdminRoles = {
 } as const
 
 export type AdminRole = (typeof AdminRoles)[keyof typeof AdminRoles]
-
-export interface AdminContext {
-  id: string
-  role: AdminRole
-}

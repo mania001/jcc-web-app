@@ -2,16 +2,12 @@ import 'server-only'
 
 import { redirect } from 'next/navigation'
 import { createClient } from '../supabase/server'
-import { AdminRole } from './admin-roles'
 import { db } from '@/db'
 import { admins } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { AdminRole } from '@/config/admin/roles'
 
-interface RequireAdminOptions {
-  allowedRoles?: AdminRole[]
-}
-
-export async function requireAdmin(options: RequireAdminOptions = {}) {
+export async function requireAdmin() {
   const supabase = await createClient()
 
   const {
@@ -19,31 +15,20 @@ export async function requireAdmin(options: RequireAdminOptions = {}) {
   } = await supabase.auth.getUser()
 
   // 1. 로그인 안 됨
-  if (!user) {
-    redirect('/admin/login')
-  }
+  if (!user) redirect('/admin/login')
 
   // 2. admins 테이블 확인
   const admin = await db.query.admins.findFirst({
     where: eq(admins.id, user.id),
   })
 
-  if (!admin) {
-    redirect('/admin/login')
-  }
+  if (!admin) redirect('/admin/login')
 
   // 3. 승인 안 됨
-  if (!admin.isActive) {
-    redirect('/admin/pending')
-  }
-
-  // 4. role 제한
-  if (options.allowedRoles && !options.allowedRoles.includes(admin.role as AdminRole)) {
-    redirect('/admin')
-  }
+  if (!admin.isActive) redirect('/admin/pending')
 
   return {
     id: admin.id,
-    role: admin.role,
+    role: admin.role as AdminRole,
   }
 }

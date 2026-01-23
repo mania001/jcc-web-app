@@ -1,6 +1,6 @@
 'use client'
 
-import { AdminRoles, type AdminRole } from '@/lib/admin/admin-roles'
+import { AdminRoles, type AdminRole } from '@/config/admin/roles'
 import { updateAdminRole } from '../actions/update-admin-role'
 import { updateAdminStatus } from '../actions/update-admin-status'
 

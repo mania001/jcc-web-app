@@ -1,4 +1,4 @@
-import { AdminRoles } from '@/lib/admin'
+import { AdminRoles } from '@/config/admin/roles'
 import { boolean, pgEnum, pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 export const adminRoleEnum = pgEnum(
