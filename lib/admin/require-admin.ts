@@ -6,8 +6,9 @@ import { db } from '@/db'
 import { admins } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { AdminRole } from '@/config/admin/roles'
+import { AdminContext } from './types'
 
-export async function requireAdmin() {
+export async function requireAdmin(): Promise<AdminContext> {
   const supabase = await createClient()
 
   const {
@@ -30,5 +31,8 @@ export async function requireAdmin() {
   return {
     id: admin.id,
     role: admin.role as AdminRole,
+    email: user.email!,
+    name: user.user_metadata?.name ?? 'Admin',
+    thumbnail: user.user_metadata?.avatar_url ?? null,
   }
 }

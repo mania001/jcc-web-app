@@ -1,4 +1,4 @@
-import { AdminIconKey } from '@/components/layouts/admin/icon-map'
+import { AdminIconKey } from '@/components/layouts/admin/sidebar/icon-map'
 import { AdminRole, AdminRoles } from './roles'
 
 export interface AdminNavItem {

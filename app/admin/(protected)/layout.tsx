@@ -31,5 +31,9 @@ export default async function AdminProtectedLayout({ children }: { children: Rea
     navigation: adminNavigation,
   })
 
-  return <AdminLayout navigation={visibleNavigation}>{children}</AdminLayout>
+  return (
+    <AdminLayout user={admin} navigation={visibleNavigation}>
+      {children}
+    </AdminLayout>
+  )
 }
